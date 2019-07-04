@@ -1,4 +1,4 @@
-Place save files in "C:\Program Files (x86)\Steam\userdata\" . <SteamIDFolder> . "\860890\remote"
+Place save files in "C:\Program Files (x86)\Steam\userdata\" . (SteamIDFolder) . "\860890\remote"
   
 You need AutoHotKey installed to run the AHK file. 
 
