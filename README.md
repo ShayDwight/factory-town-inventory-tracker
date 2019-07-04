@@ -8,9 +8,9 @@ Once you start the AHK or EXE, a green H icon will appear in your Notification A
 
 F5 starts the script once loaded. F6 will stop the current script and RE-load it. 
 
-This script/addon is no where near complete. The next steps I need to complete are to add an auto-refresh to automatically pull/poll data from your save file to update the numbers on the main GUI as you play. 
+This script/addon is no-where near complete. The next steps I need to complete are to add an auto-refresh to automatically pull/poll data from your save file to update the numbers on the main GUI as you play. 
 
-The default AutoSave Interval is 10 minutes, but can go as low as 3 minutes, and as high as 60 minutes
+The default AutoSave Interval is 10 minutes, but can go as low as 3 minutes, and as high as 60 minutes.
 
 Updates to come:
 
@@ -18,3 +18,9 @@ Updates to come:
   * Adding pretty icons and whatnot
   * Adding a way to track trends over time
     * Clicking a single item will pull up a simple graph showing trends
+  * A menu bar to select certain options
+
+
+Special Notes: 
+
+*Inventory Tracker - Copy.ahk* has a different style of displaying items. Instead of displaying every single item on one GUI window, it instead uses AHK's ListView to display them in a scrollable list. There's no EXE with this one, because this is experimental. It was suggested to me that I give the option to choose between full GUI list (old-style) or ListView. I may do it. The search bar at the top of the ListView version is non-functional right now. I plan on making it work Live Search-style. As you type in, only the relevant lines are displayed in the ListView. 
