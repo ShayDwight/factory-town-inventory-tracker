@@ -83,30 +83,40 @@ if !(SteamIDFolder)
 
 FactoryTownSaveFolder := "C:\Program Files (x86)\Steam\userdata\" . SteamIDFolder . "\860890\remote"
 SavFiles := []
-Loop, Files, %FactoryTownSaveFolder%\*.sav
 
+Gui, SF:Default
+Gui, SF:Add, ListView, -multi r10, File Name|Date Modified
+
+Loop, %FactoryTownSaveFolder%\*.sav
 {
-	SavFiles.Push(A_LoopFileName)
+	FormatTime, FileTimeFormat, %A_LoopFileTimeModified%, M/d/yyyy h:mm tt	
+	LV_Add("", A_LoopFileName, FileTimeFormat)
 }
-for i in SavFiles
-	SFmsgbox .= SavFiles[i] "|"
+LV_ModifyCol()
+LV_ModifyCol(2, "SortDesc")
+
+Gui, SF:Add, Text,, Please select your active Save File:
+;Gui, SF:Add, ListBox, r10 w500 vSelectedFile, %SavFilesList%
+Gui, SF:Add, Button, gSelectFileOK, OK
+Gui, SF:Show
+return
+
+SelectFileOK:
+LV_GetText(SaveFile, LV_GetNext())
+Gui, SF:Submit
+;msgbox % SaveFile
 
 
 Main:
 targetID = "targetID"
 pInventory = "playerInventory"
-
-
-FileSelectFile, selectedFile,3, %FactoryTownSaveFolder%, Select Sav File, SAV Files (*.sav)
-if selectedFile =
-	Reload
-SplitPath, selectedFile, name, dir, ext, name_no_ext, drive
-iniInventory :=  name_no_ext . " Inventory.ini"
-iniTotals := name_no_ext . " Totals.ini"
 InventoryIDs := []
 playerInventoryTotal := []
 startTime := A_TickCount
 
+selectedFile := FactoryTownSaveFolder . "\" . SaveFile
+
+;msgbox % "Selected File is: " selectedFile
 
 Loop, read, %selectedFile%
 {
@@ -210,7 +220,7 @@ for i, v in ItemIDs
         column := Floor(i / 20)
         X := column*140
         Y := row*20
-        Gui, Add, Text, w100 x%X% y%Y% Right, %v%
+        Gui, FTIT:Add, Text, w100 x%X% y%Y% Right, %v%
     }
     if !(barntotalInventory[i])
         barntotalInventory[i] := 0
@@ -225,12 +235,12 @@ for i, v in barntotalInventory
         column := Floor(i / 20)
         X := column*140+110
         Y := row*20
-        Gui, Add, Text, w30 x%X% y%Y% Right, %v%
+        Gui, FTIT:Add, Text, w30 x%X% y%Y% Right, %v%
     }
 }    
-msgbox % csvWrite
+;msgbox % csvWrite
 
-Gui,Show,,Factory Town Inventory Tracker
+Gui, FTIT:Show,,Factory Town Inventory Tracker
 return
 
 
