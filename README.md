@@ -1,8 +1,8 @@
-Place .sav files in "C:\Program Files (x86)\Steam\userdata\" . (SteamIDFolder) . "\860890\remote"
-  
 You need AutoHotKey installed to run the AHK file. 
 
 You should only need to download either the AHK file (if you have AHK pre-installed) or the EXE file. If you don't have Factory Town installed on your computer, you will also need to download some sample .sav files provided and place them where instructed.
+
+*Place .sav files in "C:\Program Files (x86)\Steam\userdata\" . (SteamIDFolder) . "\860890\remote"*
 
 Once you start the AHK or EXE, a green H icon will appear in your Notification Area, but nothing will happen until you hit F5 on your keyboard. 
 
