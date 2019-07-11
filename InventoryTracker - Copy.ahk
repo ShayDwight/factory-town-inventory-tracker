@@ -1,9 +1,10 @@
 ;#Include JSON.ahk
+#SingleInstance,Force
 SetWorkingDir %A_ScriptDir%
 ItemIDs := {1:"Wood",2:"Planks",3:"Stone",4:"Stone Brick",5:"Iron Ore",6:"Iron Plate",7:"Gold Ore",8:"Gold Ingot",9:"Coal",10:"Reinforced Plank",11:"Mana Brick",12:"OmniStone",13:"Metal Conveyor Belt",14:"Cloth Conveyor Belt",15:"Magic Conveyor Belt",16:"Rail Tile",17:"Magic Rail Tile",18:"Steam Pipe",19:"Mana Pipe",20:"OmniPipe",21:"Wheat",22:"Sugar",23:"Apple",24:"Berries",27:"Carrot",28:"Cotton",29:"Tomato",30:"Pear",31:"Potato",32:"Herb",33:"Water",34:"Magma",35:"Flour",36:"Bread",37:"Jam",38:"Fruit Juice",39:"Milk",40:"Butter",41:"Cheese",42:"Cake",43:"Berry Cake",44:"Apple Pie",45:"Fish Stew",46:"Meat Stew",47:"Veggie Stew",48:"Sandwich",49:"Fertilizer",50:"Animal Feed",51:"Leather",52:"Beef",53:"Cooked Beef",54:"Egg",55:"Cooked Chicken",56:"Raw Chicken",57:"Fish",58:"Cooked Fish",59:"Wood Wheel",60:"Iron Wheel",61:"Gear",62:"Nails",63:"Wood Axe",64:"Pickaxe",65:"Wool",66:"Cloth",67:"Shirt",68:"Cloak",69:"Magic Cloak",70:"Shoe",71:"Warm Coat",72:"Magic Robe",73:"Crown",74:"Fire Ring",75:"Water Ring",76:"Necklace",77:"Polished Stone",78:"Ward",79:"Bandage",80:"Poultice",81:"Ointment",82:"Medical Wrap",83:"Protein Shake",84:"Fish Oil",85:"Remedy",86:"Health Potion",87:"Antidote",88:"Elixer",89:"Paper",90:"Book",91:"Enchanted Book",92:"Strength Spellbook",93:"Stamina Spellbook",94:"Cure Spellbook",95:"Protection Spellbook",96:"Mana Shard",97:"Fire Stone",99:"Air Stone",101:"Water Stone",103:"Earth Stone",105:"Fire Ether",106:"Water Ether",107:"Earth Ether",108:"Air Ether",109:"Mana Crystal",110:"Fire Crystal",111:"Water Crystal",112:"Earth Crystal",113:"Air Crystal",114:"Depleted Mana",115:"Depleted Fire",116:"Depleted Water",117:"Depleted Earth",118:"Depleted Air"}
 F5::
-startTime := 
-endTime :=
+
+
 if (A_ScriptDir == A_Desktop)
 {
 	MsgBox,51,, This Program creates a configuration file to keep track of its location on your screen, as well as a comma-separated values (.csv) file to keep track of trends.`n`nIf you are running this from your desktop, it is suggested you move this program to a folder in your User Folder, or a secondary folder on your Desktop, and create a shortcut for it on your Desktop`n`nIf you would like me to create a folder on your Desktop for you, press Yes.`n`nIf you don't mind configuration files on your Desktop, press No.`n`nIf you would like to move the program yourself, press Cancel.
@@ -25,7 +26,6 @@ if (A_ScriptDir == A_Desktop)
 	}
 	
 }
-
 
 FoldersGui:
 ManySteamID := []
@@ -68,10 +68,8 @@ else
 	SteamIDFolder := ManySteamID[1]
 }
 
-
 FoldersSubmit:
 Gui, Folders:Submit
-
 
 if !(SteamIDFolder) 
 {
@@ -79,7 +77,6 @@ if !(SteamIDFolder)
 	Gui, Folders:Destroy
 	Goto FoldersGui
 }
-
 
 FactoryTownSaveFolder := "C:\Program Files (x86)\Steam\userdata\" . SteamIDFolder . "\860890\remote"
 SavFiles := []
@@ -92,11 +89,11 @@ Loop, %FactoryTownSaveFolder%\*.sav
 	FormatTime, FileTimeFormat, %A_LoopFileTimeModified%, M/d/yyyy h:mm tt	
 	LV_Add("", A_LoopFileName, FileTimeFormat)
 }
+
 LV_ModifyCol()
 LV_ModifyCol(2, "SortDesc")
 
 Gui, SF:Add, Text,, Please select your active Save File:
-;Gui, SF:Add, ListBox, r10 w500 vSelectedFile, %SavFilesList%
 Gui, SF:Add, Button, gSelectFileOK, OK
 Gui, SF:Show
 return
@@ -104,96 +101,18 @@ return
 SelectFileOK:
 LV_GetText(SaveFile, LV_GetNext())
 Gui, SF:Submit
-;msgbox % SaveFile
 
 
 Main:
-targetID = "targetID"
 pInventory = "playerInventory"
-InventoryIDs := []
 playerInventoryTotal := []
-startTime := A_TickCount
 
 selectedFile := FactoryTownSaveFolder . "\" . SaveFile
-
-;msgbox % "Selected File is: " selectedFile
-
-Loop, read, %selectedFile%
-{
-	LineRead := StrReplace(A_LoopReadLine, "{""pos""", "`n{""pos""", repCount)
-	Loop, Parse, LineRead, `n
-	{		
-		LineReadPercent := Round((A_Index/repCount)*100)
-		if instr(A_LoopField, targetID)
-		{
-			if (SubStr(A_loopField,0,1) == ",") 
-			{
-				barn := SubStr(A_LoopField, 1, -1)
-			}
-			barnobj := JSON.load(barn)
-			barnobjtargetID := barnobj.b.targetID
-			barnobjtype := barnobj.b.type
-			barnID := barnobjtype . barnobjtargetID
-			barnobjNum1 := barnobj.b.inventory[1].f . "-1"
-			barnobjNum2 := barnobj.b.inventory[2].f . "-2"
-			barnobjNum3 := barnobj.b.inventory[3].f . "-3"
-			barnobjNum4 := barnobj.b.inventory[4].f . "-4"
-			barnobjQua1 := barnobj.b.inventory[1].c 
-			barnobjQua2 := barnobj.b.inventory[2].c
-			barnobjQua3 := barnobj.b.inventory[3].c
-			barnobjQua4 := barnobj.b.inventory[4].c
-			
-			%barnID% := {(barnobjNum1): (barnobjQua1), (barnobjNum2): (barnobjQua2), (barnobjNum3): (barnobjQua3), (barnobjNum4): (barnobjQua4)}
-			
-			InventoryIDs.Push(barnID)
-		}
-		if instr(A_LoopField, pInventory)
-		{
-			FoundPos := RegExMatch(A_LoopField, """playerInventory"":\[\[.*]]\,""r", varforsavedstring)
-			vartrimmed := SubStr(varforsavedstring, 1, -3)
-			varwithbrackets := "{" . vartrimmed . "}"
-			pInvobj := JSON.load()
-			Loop, Parse, varwithbrackets, ]\,[
-			{
-			LineReadpI := StrReplace(A_LoopField, "`,[", "")
-			LineReadpI := StrReplace(LineReadpI, "{""playerInventory"":[[", "")
-			LineReadpI := StrReplace(LineReadpI, "}", "")
-			LineReadpI := StrReplace(LineReadpI, "`,", ":")
-			LineReadpI_Array := StrSplit(LineReadpI, ":")
-			
-			LRpIA1 := LineReadpI_Array[1]
-			LRpIA2 := LineReadpI_Array[2]
-			playerInventoryTotal[LRpIA1] := LRpIA2
-			
-			
-			}
-		}
-	}
-}
 for i, v in playerInventoryTotal
 	pITmsgbox .= i "=" v "`n"
+	
+barntotalInventory := ReadSav(selectedFile)
 
-barntotalInventory := []
-for i in InventoryIDs
-{
-	key =
-	value = 
-	enum := InventoryIDs[i]
-	if InStr(enum, "barn")
-	{
-		for key, value in %enum%
-		{
-			keysplit_array := StrSplit(key, "-")
-			ksa := keysplit_array[1]
-			addingInventory := barntotalInventory[ksa]
-			if !(addingInventory)
-				addingInventory = 0
-			value += addingInventory
-			barntotalInventory[ksa] := value
-			
-		}
-	}	
-}
 endTime := A_TickCount - startTime
 endTime := Round((endtime/1000),2)
 barnmsgbox = 
@@ -212,7 +131,9 @@ for i, v in barntotalInventory
 Gui, FTIT:Default
 Gui, FTIT:Add, Edit, vLSearchInput gListSearch,
 Gui, FTIT:Add, Text, vSearchText
-Gui, FTIT:Add, ListView, -multi r25, Item|Qty
+Gui, FTIT:Add, ListView, -multi r25, ID|Item|Qty
+Gui, FTIT:Add, Text,, Last Update:
+Gui, FTIT:Add, Text, vLastUpdate
 
 RowCount = 0
 RowContents := []
@@ -220,7 +141,7 @@ for i, v in ItemIDs
 {    
 	if !(barntotalInventory[i])
         barntotalInventory[i] := 0
-	LV_Add("", v,  barntotalInventory[i])
+	LV_Add("",i, v,  barntotalInventory[i])
 	RowCount++
 	RowContents[RowCount] := v
     csvWrite .= i "=" barntotalInventory[i] "`,"
@@ -228,11 +149,11 @@ for i, v in ItemIDs
 
 
 LV_ModifyCol()
+LV_ModifyCol(1, "Integer")
+LV_ModifyCol(3, "Integer")
 
 
 Gui, FTIT:Show,,Factory Town Inventory Tracker
-
-
 return
 
 ListSearch:
@@ -246,6 +167,102 @@ for i, v in RowContents
 }
 
 return
+
+ReadSav(selectedFile)
+{
+	targetID := "targetID"
+	InventoryIDs := []
+
+	Loop, read, %selectedFile%
+	{
+		LineRead := StrReplace(A_LoopReadLine, "{""pos""", "`n{""pos""", repCount)
+		Loop, Parse, LineRead, `n
+		{		
+			LineReadPercent := Round((A_Index/repCount)*100)
+			if instr(A_LoopField, targetID)
+			{
+				if (SubStr(A_loopField,0,1) == ",") 
+				{
+					barn := SubStr(A_LoopField, 1, -2)
+				}
+				barnobj := JSON.load(barn)
+				barnobjtargetID := barnobj.b.targetID
+				barnobjtype := barnobj.b.type
+				barnID := barnobjtype . barnobjtargetID
+				barnobjNum1 := barnobj.b.inventory[1].f . "-1"
+				barnobjNum2 := barnobj.b.inventory[2].f . "-2"
+				barnobjNum3 := barnobj.b.inventory[3].f . "-3"
+				barnobjNum4 := barnobj.b.inventory[4].f . "-4"
+				barnobjQua1 := barnobj.b.inventory[1].c 
+				barnobjQua2 := barnobj.b.inventory[2].c
+				barnobjQua3 := barnobj.b.inventory[3].c
+				barnobjQua4 := barnobj.b.inventory[4].c
+				
+				%barnID% := {(barnobjNum1): (barnobjQua1), (barnobjNum2): (barnobjQua2), (barnobjNum3): (barnobjQua3), (barnobjNum4): (barnobjQua4)}				
+/*  				
+				for i, v in barnID
+					bIDmsg .= i " = " v "`n"
+				msgbox % bIDmsg
+*/				
+				InventoryIDs.Push(barnID)
+			}
+			if instr(A_LoopField, pInventory)
+			{
+				FoundPos := RegExMatch(A_LoopField, """playerInventory"":\[\[.*]]\,""r", varforsavedstring)
+				vartrimmed := SubStr(varforsavedstring, 1, -3)
+				varwithbrackets := "{" . vartrimmed . "}"
+				pInvobj := JSON.load()
+				Loop, Parse, varwithbrackets, ]\,[
+				{
+				LineReadpI := StrReplace(A_LoopField, "`,[", "")
+				LineReadpI := StrReplace(LineReadpI, "{""playerInventory"":[[", "")
+				LineReadpI := StrReplace(LineReadpI, "}", "")
+				LineReadpI := StrReplace(LineReadpI, "`,", ":")
+				LineReadpI_Array := StrSplit(LineReadpI, ":")
+				
+				LRpIA1 := LineReadpI_Array[1]
+				LRpIA2 := LineReadpI_Array[2]
+				playerInventoryTotal[LRpIA1] := LRpIA2
+				
+				
+				}
+			}
+		}
+	}
+	barntotalInventory := []
+	for i in InventoryIDs
+	{
+		key =
+		value = 
+		enum := InventoryIDs[i]
+		if InStr(enum, "barn")
+		{
+			for key, value in %enum%
+			{
+				;msgbox % key "`n" value
+				keysplit_array := StrSplit(key, "-")
+				ksa := keysplit_array[1]
+				addingInventory := barntotalInventory[ksa]
+				if !(addingInventory)
+					addingInventory = 0
+				value += addingInventory
+				barntotalInventory[ksa] := value
+				
+			}
+		}	
+	}
+	for i, v in barntotalInventory
+		bti .= i "=" v "`n"
+	msgbox % bti
+	return barntotalInventory
+}
+
+
+FTITGuiClose:
+FoldersGuiClose:
+SFGuiClose:
+Reload
+Return
 
 f6::
 reload
