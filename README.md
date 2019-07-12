@@ -24,3 +24,8 @@ Updates to come:
 Special Notes: 
 
 *Inventory Tracker - Copy.ahk* has a different style of displaying items. Instead of displaying every single item on one GUI window, it instead uses AHK's ListView to display them in a scrollable list. There's no EXE with this one, because this is experimental. It was suggested to me that I give the option to choose between full GUI list (old-style) or ListView. I may do it. The search bar at the top of the ListView version is non-functional right now. I plan on making it work Live Search-style. As you type in, only the relevant lines are displayed in the ListView. This version of the script also moved the checking of the sav file into its own Function, so it can be called at any time in the rest of the script. 
+
+Updates to *Inventory Tracker - Copy.ahk*:
+ * Changed the initial msgbox to a much nicer looking GUI window, still need to resize it
+ * Added in way to select Steam Installation if it could not find it in the default location (for instance, if you installed Steam on a secondary hard drive or location other than "C:\Program Files (x86)\Steam\")
+ * To do: draw listview gui in function
