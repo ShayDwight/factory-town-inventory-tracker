@@ -4,38 +4,47 @@ SetWorkingDir %A_ScriptDir%
 ItemIDs := {1:"Wood",2:"Planks",3:"Stone",4:"Stone Brick",5:"Iron Ore",6:"Iron Plate",7:"Gold Ore",8:"Gold Ingot",9:"Coal",10:"Reinforced Plank",11:"Mana Brick",12:"OmniStone",13:"Metal Conveyor Belt",14:"Cloth Conveyor Belt",15:"Magic Conveyor Belt",16:"Rail Tile",17:"Magic Rail Tile",18:"Steam Pipe",19:"Mana Pipe",20:"OmniPipe",21:"Wheat",22:"Sugar",23:"Apple",24:"Berries",27:"Carrot",28:"Cotton",29:"Tomato",30:"Pear",31:"Potato",32:"Herb",33:"Water",34:"Magma",35:"Flour",36:"Bread",37:"Jam",38:"Fruit Juice",39:"Milk",40:"Butter",41:"Cheese",42:"Cake",43:"Berry Cake",44:"Apple Pie",45:"Fish Stew",46:"Meat Stew",47:"Veggie Stew",48:"Sandwich",49:"Fertilizer",50:"Animal Feed",51:"Leather",52:"Beef",53:"Cooked Beef",54:"Egg",55:"Cooked Chicken",56:"Raw Chicken",57:"Fish",58:"Cooked Fish",59:"Wood Wheel",60:"Iron Wheel",61:"Gear",62:"Nails",63:"Wood Axe",64:"Pickaxe",65:"Wool",66:"Cloth",67:"Shirt",68:"Cloak",69:"Magic Cloak",70:"Shoe",71:"Warm Coat",72:"Magic Robe",73:"Crown",74:"Fire Ring",75:"Water Ring",76:"Necklace",77:"Polished Stone",78:"Ward",79:"Bandage",80:"Poultice",81:"Ointment",82:"Medical Wrap",83:"Protein Shake",84:"Fish Oil",85:"Remedy",86:"Health Potion",87:"Antidote",88:"Elixer",89:"Paper",90:"Book",91:"Enchanted Book",92:"Strength Spellbook",93:"Stamina Spellbook",94:"Cure Spellbook",95:"Protection Spellbook",96:"Mana Shard",97:"Fire Stone",99:"Air Stone",101:"Water Stone",103:"Earth Stone",105:"Fire Ether",106:"Water Ether",107:"Earth Ether",108:"Air Ether",109:"Mana Crystal",110:"Fire Crystal",111:"Water Crystal",112:"Earth Crystal",113:"Air Crystal",114:"Depleted Mana",115:"Depleted Fire",116:"Depleted Water",117:"Depleted Earth",118:"Depleted Air"}
 F5::
 
-
 if (A_ScriptDir == A_Desktop)
 {
-	MsgBox,51,, This Program creates a configuration file to keep track of its location on your screen, as well as a comma-separated values (.csv) file to keep track of trends.`n`nIf you are running this from your desktop, it is suggested you move this program to a folder in your User Folder, or a secondary folder on your Desktop, and create a shortcut for it on your Desktop`n`nIf you would like me to create a folder on your Desktop for you, press Yes.`n`nIf you don't mind configuration files on your Desktop, press No.`n`nIf you would like to move the program yourself, press Cancel.
-	ifmsgbox Yes
-	{
-		FileCreateDir, %A_Desktop%\Factory Town Inventory Tracker\
-		FileMove, %A_Desktop%\InventoryTracker.ahk, %A_Desktop%\Factory Town Inventory Tracker\
-		FileCreateShortcut, %A_Desktop%\Factory Town Inventory Tracker\InventoryTracker.ahk, %A_Desktop%\InventoryTracker.lnk
-		Run %A_Desktop%\Factory Town Inventory Tracker\InventoryTracker.ahk
-		ExitApp
-	}
-	ifMsgBox No
-	{
-		Goto, Main
-	}
-	IfMsgBox Cancel
-	{
-		ExitApp
-	}
+	Gui, Startup:Add, Text, x52 y39 w350 h200, This program creates a configuration file to keep track of its location on your screen, as well as a comma-separated values (.csv) file to keep track of trends.`n`nIf you are running this from your desktop, it is suggested you move this program to a folder in your User Folder, or a secondary folder on your Desktop, and create a shortcut for it on your Desktop`n`nIf you would like me to create a folder on your Desktop for you, press Yes.`n`nIf you don't mind configuration files on your Desktop, press No.`n`nIf you would like to move the program yourself, press Choose Folder. This will create a shortcut on your desktop for you.
+	Gui, Startup:Add, Button, x42 y239 w100 h30 gStartupYes, Yes
+	Gui, Startup:Add, Button, x152 y239 w100 h30 gStartupNo , No
+	Gui, Startup:Add, Button, x262 y239 w100 h30 gStartupChoose , Choose Folder
+	Gui, Startup:Show, x548 y199 h379 w479, Factory Town Inventory Tracker
+	Return
 	
+	StartupYes:
+	FileCreateDir, %A_Desktop%\Factory Town Inventory Tracker\
+	FileMove, %A_Desktop%\%A_ScriptName%, %A_Desktop%\Factory Town Inventory Tracker\
+	FileCreateShortcut, %A_Desktop%\Factory Town Inventory Tracker\%A_ScriptName%, %A_Desktop%\%A_ScriptName%.lnk
+	Run %A_Desktop%\Factory Town Inventory Tracker\%A_ScriptName%
+	ExitApp
+	
+	StartupChoose:
+	FileSelectFolder, StartupFolder, A_Desktop, 3
+	FileMove, %A_Desktop%\%A_ScriptName%, %StartupFolder%\
+	FileCreateShortcut %StartupFolder%\%A_ScriptName%, %A_Desktop%\%A_ScriptName%.lnk
+	Run %StartupFolder%\%A_ScriptName%
+	ExitApp
+	
+
+	StartupGuiClose:
+	ExitApp
+	return
 }
 
+StartupNo:
 FoldersGui:
+
 ManySteamID := []
 ListSteamIDs =
-Loop, Files, C:\Program Files (x86)\Steam\userdata\*, D
+if !InStr(FileExist("C:\Program Files (x86)\Steam\userdata\"), "D")
+	FileSelectFolder, SteamFolder, , 0, This program could not find your Steam Installation`n`nPlease select it below:
+else
+	SteamFolder := "C:\Program Files (x86)\Steam" 
+Loop, Files, %SteamFolder%\userdata\*, D
 {
-	if (A_LoopFileName == 0) 
-	{
-	}
-	else 
+	if !(A_LoopFileName == 0) 
 	{
 		ManySteamID.Push(A_LoopFileName)
 	}
@@ -58,7 +67,7 @@ if (FoldersFound > 1)
 	
 	
 	Gui, Folders:Add, Text,,Select your correct SteamID3 from the list below.
-	Gui, Folders:Add, ListBox, vSteamIDFolder, %ListSteamIDs%
+	Gui, Folders:Add, ListBox, r5 vSteamIDFolder, %ListSteamIDs%
 	Gui, Folders:Add, Button, gFoldersSubmit, OK
 	Gui, Folders:Show,, List of Steam IDs
 	return
@@ -78,7 +87,7 @@ if !(SteamIDFolder)
 	Goto FoldersGui
 }
 
-FactoryTownSaveFolder := "C:\Program Files (x86)\Steam\userdata\" . SteamIDFolder . "\860890\remote"
+FactoryTownSaveFolder := SteamFolder . "\userdata\" . SteamIDFolder . "\860890\remote"
 SavFiles := []
 
 Gui, SF:Default
